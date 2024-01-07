@@ -47,12 +47,17 @@ func import(source_path, destination_path, options, _platforms, _gen_files):
 
 	var voxel_data = unify_voxels(vox, mergeKeyframes);
 	var meshes = []
-	for keyframeVoxels in voxel_data:
-		if greedy:
-			meshes.append(GreedyMeshGenerator.new().generate(vox, voxel_data[keyframeVoxels], scale, snaptoground))
-		else:
-			meshes.append(CulledMeshGenerator.new().generate(vox, voxel_data[keyframeVoxels], scale, snaptoground))
-	return meshes
+	if (voxel_data == not null):
+		for keyframeVoxels in voxel_data:
+			if greedy:
+				meshes.append(GreedyMeshGenerator.new().generate(vox, voxel_data[keyframeVoxels], scale, snaptoground))
+			else:
+				meshes.append(CulledMeshGenerator.new().generate(vox, voxel_data[keyframeVoxels], scale, snaptoground))
+		return meshes
+	else:
+		print("Vox Importer Common: Voxel Data is null")
+		return null;
+		
 
 func string_to_vector3(input: String) -> Vector3:
 	var data = input.split_floats(' ');
@@ -202,9 +207,13 @@ func read_chunk(vox: VoxData, file: VoxFile):
 	file.read_remaining();
 
 func unify_voxels(vox: VoxData, mergeKeyframes: bool):
-	var node = vox.nodes[0];
-	var layeredVoxelData = get_layeredVoxels(node, vox, -1, mergeKeyframes)
-	return layeredVoxelData.getDataMergedFromLayers();
+	if vox.nodes.has(0):
+		var node = vox.nodes[0];
+		var layeredVoxelData = get_layeredVoxels(node, vox, -1, mergeKeyframes);
+		return layeredVoxelData.getDataMergedFromLayers();
+	else:
+		print("Vox Importer Common: Vox Nodes are null");
+		return null;
 
 class LayeredVoxelData:
 	var data_keyframed_layered = {};
