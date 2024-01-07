@@ -59,5 +59,13 @@ func _get_option_visibility(path, option, options):
 func _import(source_path, destination_path, options, _platforms, _gen_files):
 	var meshes = VoxImporterCommon.new().import(source_path, destination_path, options, _platforms, _gen_files);
 	var full_path = "%s.%s" % [ destination_path, _get_save_extension() ]
-	print(meshes[0])
-	return ResourceSaver.save(meshes[0], full_path)
+	if meshes != null:
+		if meshes.has(0):
+			print(meshes[0])
+			return ResourceSaver.save(meshes[0], full_path)
+		else:
+			print("Vox Importer Mesh: Meshes are null")
+			return null
+	else:
+		print("Vox Importer Mesh: No Meshes")
+		return null;
